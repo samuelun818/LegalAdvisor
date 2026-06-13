@@ -2,9 +2,9 @@ import numpy as np
 import argparse
 import gc
 
-from trainers import bagofunigrams
-from trainers import textconverter
-from helpers import dataset_helper, plot_helper, log_helper
+from Trainers import bagofunigrams
+from Trainers import textconverter
+from Helpers import dataset_helper, plot_helper, log_helper
 
 import keras
 from keras.layers import Dense, LSTM

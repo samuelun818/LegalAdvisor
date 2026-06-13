@@ -2,8 +2,8 @@ import argparse
 
 from matplotlib import pyplot
 
-from helpers import dataset_helper
-from trainers import text_classifier
+from Helpers import dataset_helper
+from Trainers import text_classifier
 
 
 def load_articles():

@@ -5,8 +5,8 @@ import requests
 
 import numpy as np
 
-from trainers import bagofbigrams, bagofunigrams, bagoftrigrams
-from helpers import log_helper, html_helper, file_helper, dataset_helper
+from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams
+from Helpers import log_helper, html_helper, file_helper, dataset_helper
 
 # url = 'https://legalref.judiciary.hk/lrs/common/ju/ju_body.jsp?DIS=167483&AH=&QS=&FN=&currpage=T#'
 HK_JUDGMENT_URL = 'https://legalref.judiciary.hk/lrs/common/ju/ju_body.jsp'
