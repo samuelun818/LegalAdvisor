@@ -2,7 +2,7 @@ import numpy as np
 
 import src.Helpers.file_helper as fh
 
-DATAFILE_FOLDER = "datasets/"
+DATAFILE_FOLDER = "../datafiles/"
 
 def load_dataset(file_name):
 

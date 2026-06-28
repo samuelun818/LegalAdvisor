@@ -20,6 +20,7 @@ def predict_result(x):
     classifier = text_classifier.text_classifier()
 
     pred = classifier.predict(x)
+    print(pred)
 
 def plot_result_history(history):
 

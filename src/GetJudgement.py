@@ -5,6 +5,7 @@ import requests
 
 import numpy as np
 
+from Crawlers import HKJudgement
 from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams
 from Helpers import log_helper, html_helper, file_helper, dataset_helper
 
@@ -107,12 +108,8 @@ def main(arg):
     end_num = arg['end']
 
     log_helper.print_message('Action: {0}'.format(action))
-    if action == "download":
-        for num in range(start_num, end_num):
-            download_judgments(num)
-
-        log_helper.print_message("Download completed.")
-        return
+    judgements = HKJudgement()
+    judgements.downloadJudgements(start_num, end_num)
 
     bagofgrams = None
     if action == "unigrams":
@@ -139,9 +136,9 @@ def main(arg):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", type=str)
-    parser.add_argument("start", type=int)
-    parser.add_argument("end", type=int)
+    parser.add_argument("action", type=str, help='Action (unigrams/bigrams/trigrams)')
+    parser.add_argument("start", type=int, help='Start Judge no. (150000 - 159999)')
+    parser.add_argument("end", type=int, help='End Judge no. (150001 - 160000)')
     args = parser.parse_args()
     args = vars(args)
 
