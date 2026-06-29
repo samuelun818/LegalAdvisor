@@ -114,6 +114,7 @@ def main(arg):
 
     log_helper.print_message('Fill bag: {0}'.format(bagtype))
     bag = bag_of_words(no_of_gram)
+
     for num in range(start_num, end_num):
         article = judgements.readJudgement(num)
         if article != None:

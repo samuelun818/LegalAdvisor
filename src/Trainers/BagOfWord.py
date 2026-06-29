@@ -12,15 +12,14 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 from src.Helpers import dataset_helper
 
-
 class BagType(Enum):
     Uni = 1
     Bi = 2
     Tri = 3
-    Multi = 4
+
 
 class bag_of_words:
-    def __init__(self, no_of_grams):
+    def __init__(self, no_of_grams = 1):
         self.words = None
         self.bagtype = "words"
         self.no_of_grams = no_of_grams
@@ -105,7 +104,6 @@ class bag_of_words:
 
         return grams
 
-
     def set_multigram(self, words):
         return
 
@@ -132,6 +130,9 @@ class bag_of_words:
 
     def init_wordbag(self):
         self.words = None
+
+    def shape(self):
+        return np.array(self.words).shape
 
     def vectorize_paragraph(self, text):
 

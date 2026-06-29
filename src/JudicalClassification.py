@@ -2,9 +2,10 @@ import argparse
 
 from matplotlib import pyplot
 
-from Helpers import dataset_helper
+from Helpers import dataset_helper, log_helper
 from Trainers import text_classifier
-
+from Trainers.Class_trainer import  class_trainer
+from Crawlers import HKJudgement
 
 def load_articles():
     articles = []
@@ -50,9 +51,31 @@ def train_model():
     plot_result_history(classifier.history)
 
 
+def transform_articles():
+    X, Y = []
+
+    trainer = class_trainer()
+
+    path = f"../judgements/HK/"
+    files = os.listdir(path)
+    files.sort()
+
+    judgement = HKJudgement()
+    for filename in files:
+        jnum = filename[:-4]
+        text  = judgement.readJudgement(jnum)
+        x, y = trainer.Encode_article(text)
+
+        if x != None:
+            X.append(x)
+            Y.append(y)
+
+    return X, Y
+
 def main(arg):
     action = arg['action']
     input = arg['text']
+
 
     if action == "train":
         train_model()
@@ -63,7 +86,7 @@ def main(arg):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", type=str)
+    parser.add_argument("action", type=str, help="Action (train/predict)")
     parser.add_argument("text", type=str)
     args = parser.parse_args()
     args = vars(args)

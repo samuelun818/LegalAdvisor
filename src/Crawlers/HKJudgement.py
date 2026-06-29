@@ -51,3 +51,4 @@ class HKJudgement(Judgement):
             return None
 
         return text
+
