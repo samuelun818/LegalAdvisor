@@ -6,7 +6,7 @@ import requests
 import numpy as np
 
 from Crawlers import HKJudgement
-from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams
+from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams, bag_of_words
 from Helpers import log_helper, html_helper, file_helper, dataset_helper
 
 # url = 'https://legalref.judiciary.hk/lrs/common/ju/ju_body.jsp?DIS=167483&AH=&QS=&FN=&currpage=T#'
@@ -103,40 +103,38 @@ def merge_judgements(action, num, article, category):
 
 
 def main(arg):
-    action = arg['action']
+    bagtype = arg['type']
+    no_of_gram = arg['noofgram']
     start_num = arg['start']
     end_num = arg['end']
 
-    log_helper.print_message('Action: {0}'.format(action))
+    log_helper.print_message('Get Judgement: {0} - {1}'.format(str(start_num), str(end_num)))
     judgements = HKJudgement()
     judgements.downloadJudgements(start_num, end_num)
 
-    bagofgrams = None
-    if action == "unigrams":
-        bagofgrams = bagofunigrams.bag_of_unigrams()
-    elif action == "bigrams":
-        bagofgrams = bagofbigrams.bag_of_bigrams()
-    elif action == "trigrams":
-        bagofgrams = bagoftrigrams.bag_of_trigrams()
-    # elif action =="multigrams":
-    #     bagofgrams = bagoftrigrams.bag_of_trigrams()
-    else:
-        return
+    log_helper.print_message('Fill bag: {0}'.format(bagtype))
+    bag = bag_of_words(no_of_gram)
+    for num in range(start_num, end_num):
+        article = judgements.readJudgement(num)
+        if article != None:
+            bag.fill_wordbag(article)
+            bag.merge_wordbag()
+            bag.init_wordbag()
 
-    log_helper.print_message('Bag type : {0}'.format(bagofgrams.type()))
-    extract_judgements(bagofgrams, start_num, end_num)
-
-    log_helper.print_message('Fit Bag of grams : {0}'.format(bagofgrams.type()))
-    transform_judgements(bagofgrams, action, start_num, end_num)
+    # log_helper.print_message('Bag type : {0}'.format(bagofgrams.type()))
+    # extract_judgements(bagofgrams, start_num, end_num)
+    #
+    # log_helper.print_message('Fit Bag of grams : {0}'.format(bagofgrams.type()))
+    # transform_judgements(bagofgrams, action, start_num, end_num)
     #
     # log_helper.print_message("Article grams : " + str(np.array(articles).shape))
     # log_helper.print_message("Output categories : " + str(np.array(category).shape))
     # dataset_helper.save_arrays(np.array(articles), np.array(category), 'judgments_{}'.format(action))
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", type=str, help='Action (unigrams/bigrams/trigrams)')
+    parser.add_argument("type", type=str, help='Grams type (words/grams)')
+    parser.add_argument("noofgram", type=str, help='No of Grams (words : 1 - 3, grams:　20-40)')
     parser.add_argument("start", type=int, help='Start Judge no. (150000 - 159999)')
     parser.add_argument("end", type=int, help='End Judge no. (150001 - 160000)')
     args = parser.parse_args()

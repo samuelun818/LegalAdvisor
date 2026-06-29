@@ -22,6 +22,7 @@ class BagType(Enum):
 class bag_of_words:
     def __init__(self, no_of_grams):
         self.words = None
+        self.bagtype = "words"
         self.no_of_grams = no_of_grams
         self.le = preprocessing.LabelEncoder()
 
@@ -78,12 +79,8 @@ class bag_of_words:
             sent_grams = []
             if (self.no_of_grams == 1):
                 sent_grams = self.set_unigram(words)
-            # elif (self.no_of_grams == 2):
-            #     sent_grams = self.set_bigram(words)
-            # elif (self.no_of_grams == 3):
-            #     sent_grams = self.set_trigram(words)
-            # else:
-            #     sent_grams = self.set_multigram(words)
+            else:
+                sent_grams = self.set_multigram(words)
 
             if len(sent_grams) > 0:
                 for grams in sent_grams:
@@ -108,11 +105,6 @@ class bag_of_words:
 
         return grams
 
-    def set_bigram(self, words):
-        return
-
-    def set_trigram(self, words):
-        return
 
     def set_multigram(self, words):
         return
@@ -126,7 +118,7 @@ class bag_of_words:
         self.words = dataset_helper.load_dataset( filename)
 
     def merge_wordbag(self):
-        filename = "bagof{}".format(BagType(self.no_of_grams).name)
+        filename = "bagof{}".format(self.bagtype)
 
         pre_dataset = dataset_helper.load_dataset(filename)
         if (pre_dataset is not None):
@@ -137,6 +129,9 @@ class bag_of_words:
 
         filename = filename[:-4]
         dataset_helper.save_dataset(self.words, filename)
+
+    def init_wordbag(self):
+        self.words = None
 
     def vectorize_paragraph(self, text):
 
