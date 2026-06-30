@@ -8,7 +8,7 @@ import nltk
 from nltk import tokenize
 from nltk.stem.wordnet import WordNetLemmatizer
 
-from src.Helpers import dataset_helper
+from Helpers import dataset_helper
 
 
 class bag_of_bigrams:

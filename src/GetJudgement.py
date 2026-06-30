@@ -6,7 +6,7 @@ import requests
 import numpy as np
 
 from Crawlers import HKJudgement
-from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams, bag_of_words
+from Trainers import bagofbigrams, bagofunigrams, bagoftrigrams, BagOfWord
 from Helpers import log_helper, html_helper, file_helper, dataset_helper
 
 # url = 'https://legalref.judiciary.hk/lrs/common/ju/ju_body.jsp?DIS=167483&AH=&QS=&FN=&currpage=T#'
@@ -109,11 +109,11 @@ def main(arg):
     end_num = arg['end']
 
     log_helper.print_message('Get Judgement: {0} - {1}'.format(str(start_num), str(end_num)))
-    judgements = HKJudgement()
+    judgements = HKJudgement.HKJudgement()
     judgements.downloadJudgements(start_num, end_num)
 
     log_helper.print_message('Fill bag: {0}'.format(bagtype))
-    bag = bag_of_words(no_of_gram)
+    bag = BagOfWord.bag_of_words(int(no_of_gram))
 
     for num in range(start_num, end_num):
         article = judgements.readJudgement(num)
@@ -121,6 +121,9 @@ def main(arg):
             bag.fill_wordbag(article)
             bag.merge_wordbag()
             bag.init_wordbag()
+
+    bag.load_wordbag()
+    log_helper.print_message("Totally saved: {}".format(bag.shape()))
 
     # log_helper.print_message('Bag type : {0}'.format(bagofgrams.type()))
     # extract_judgements(bagofgrams, start_num, end_num)

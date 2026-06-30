@@ -10,7 +10,7 @@ from nltk import tokenize
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
-from src.Helpers import dataset_helper
+from Helpers import dataset_helper
 
 class BagType(Enum):
     Uni = 1
@@ -82,9 +82,9 @@ class bag_of_words:
                 sent_grams = self.set_multigram(words)
 
             if len(sent_grams) > 0:
-                for grams in sent_grams:
-                    if self.words.count(grams) <= 0:
-                        self.words.extend(grams)
+                for gram in sent_grams:
+                    if self.words.count(gram) <= 0:
+                        self.words.append(gram)
         return
 
     def set_unigram(self, words):
@@ -108,24 +108,23 @@ class bag_of_words:
         return
 
     def save_wordbag(self):
-        filename = "bagof{}".format(BagType(self.no_of_grams).name)
+        filename = "bagof{}".format(self.bagtype)
         dataset_helper.save_dataset(np.array(self.words), filename)
 
     def load_wordbag(self):
-        filename = "bagof{}.npy".format(BagType(self.no_of_grams).name)
+        filename = "bagof{}.npy".format(self.bagtype)
         self.words = dataset_helper.load_dataset( filename)
 
     def merge_wordbag(self):
         filename = "bagof{}".format(self.bagtype)
 
-        pre_dataset = dataset_helper.load_dataset(filename)
+        pre_dataset = dataset_helper.load_dataset("{}.npy".format(filename))
         if (pre_dataset is not None):
             if (len(np.array(self.words).shape) != len(pre_dataset.shape)):
                 return
 
         self.words = dataset_helper.merge_dataset(self.words, pre_dataset)
 
-        filename = filename[:-4]
         dataset_helper.save_dataset(self.words, filename)
 
     def init_wordbag(self):
@@ -134,7 +133,7 @@ class bag_of_words:
     def shape(self):
         return np.array(self.words).shape
 
-    def vectorize_paragraph(self, text):
+    def vectorize_text(self, text):
 
 
         return # X, y

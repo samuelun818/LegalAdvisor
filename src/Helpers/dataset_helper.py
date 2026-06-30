@@ -1,6 +1,6 @@
 import numpy as np
 
-import src.Helpers.file_helper as fh
+import Helpers.file_helper as fh
 
 DATAFILE_FOLDER = "../datafiles/"
 

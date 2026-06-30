@@ -9,7 +9,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
-from src.Helpers import dataset_helper
+from Helpers import dataset_helper
 
 
 class bag_of_unigrams:

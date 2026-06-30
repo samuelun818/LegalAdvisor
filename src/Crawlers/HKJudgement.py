@@ -3,11 +3,11 @@ import time
 
 from Crawlers.Judgement import *
 
-from src.Helpers import log_helper, html_helper, file_helper, dataset_helper
+from Helpers import log_helper, html_helper, file_helper, dataset_helper
 
 class HKJudgement(Judgement):
     def __init__(self):
-        super.__init__()
+        super().__init__()
         self.LOCATION = "HK"
         self.JUDGEMENT_URL = 'https://legalref.judiciary.hk/lrs/common/ju/ju_body.jsp'
         self.JUDGEMENT_QUERY = "?DIS={}&AH=&QS=&FN=&currpage=T#"
@@ -35,7 +35,7 @@ class HKJudgement(Judgement):
         content = html_helper.get_urlcontent(url)
 
         if content != None:
-            html_helper.write_html(filename, content)
+            html_helper.write_html(filename, content.encode('utf-8'))
             log_helper.print_message('Save judgment file: {}'.format(filename))
 
     def readJudgement(self, judgement_no):
