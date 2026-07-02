@@ -132,8 +132,3 @@ class bag_of_words:
 
     def shape(self):
         return np.array(self.words).shape
-
-    def vectorize_text(self, text):
-
-
-        return # X, y

@@ -70,7 +70,7 @@ class text_classifier:
         for tclass in t_class:
             yclass = []
 
-            if self.resultclass.count(tclass) <= 0 :
+            if self.resultclass.count(tclass) <= 0:
                 self.resultclass.append(tclass)
 
             for i in range(n_yclass + 1):
