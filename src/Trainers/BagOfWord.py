@@ -6,6 +6,7 @@ import re
 import string
 
 import nltk
+from nltk.data import find
 from nltk import tokenize
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -25,10 +26,15 @@ class bag_of_words:
         self.no_of_grams = no_of_grams
         self.le = preprocessing.LabelEncoder()
 
-        nltk.download('stopwords')
-        nltk.download('punkt_tab')
-        nltk.download('words')
-        nltk.download('wordnet')
+        try:
+            find('corpora/stopwords')
+            print("nltk.stopwords corpus already available.")
+        except LookupError:
+            print("nltk.stopwords corpus not found. Downloading...")
+            nltk.download('stopwords')
+            nltk.download('punkt_tab')
+            nltk.download('words')
+            nltk.download('wordnet')
 
         self.english_words = set(nltk.corpus.words.words())
         self.stop_words = []

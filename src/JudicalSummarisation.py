@@ -1,10 +1,14 @@
 import numpy as np
 import argparse
-import gc
+import os, gc, re
 
 from Trainers import bagofunigrams
 from Trainers import textconverter
 from Helpers import dataset_helper, plot_helper, log_helper
+
+from Trainers.Summary_trainer import  summary_trainer
+
+from Crawlers import HKJudgement
 
 import keras
 from keras.layers import Dense, LSTM
@@ -175,56 +179,94 @@ def predict_result(x):
     print(pred.shape)
     return pred
 
+def transform_judgements(trainer):
+    X, Y = [], []
 
+    categoised_set = dataset_helper.load_dataset("categorised_jnum.npy")
+    print(categoised_set.shape)
+
+
+    path = f"../datafiles/categories/"
+    files = os.listdir(path)
+    files.sort()
+
+    counter = 1
+    for filename in files:
+        ds = dataset_helper.load_dataset("categories/{}".format(filename))
+
+        for article in ds:
+            article = article.lower()
+            cleaned_text = " ".join(article.splitlines())
+            cleaned_text = re.sub(r'[^\x00-\x7F]+', '', cleaned_text)
+
+            if counter == 1:
+                print(cleaned_text)
+                counter = counter + 1
+            else:
+                return None, None
+
+            #     words = text.split()
+            # x, y = trainer.encode_articles(article)
+            #
+            # if x != None:
+            #     X.append(x)
+            #     Y.append(y)
+
+    return np.array(X), np.array(Y)
 
 def main(args):
-
     action = args['action']
 
-    converter = fit_converter()
-    print(converter.encode(["it"]))
-    print(converter.decode([3413]))
-    gc.collect()
+    trainer = summary_trainer()
+    if action == "train":
+        X, Y = transform_judgements(trainer)
 
-    if action=="transform":
-        X, Y = load_articles("judgments_trigrams")
-        log_helper.print_message('Loaded articles : X:{0} Y:{1}'.format(str(X.shape), str(Y.shape)))
 
-        X, Y = transform_data(converter, X, Y)
-
-        log_helper.print_message('Transformed X:{0} and Y:{1}'.format(str(X.shape), str(Y.shape)))
-        dataset_helper.save_arrays(np.array(X), np.array(Y), 'data_set')
-
-    elif action=="train":
-        X, Y = load_articles("data_set", loading_size=args['size'])
-
-        X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
-
-        loss, acc, hist = train_model(X_train, y_train, X_test, y_test, batch_size=16, epochs=20)
-        log_helper.print_message("Models loss : {loss}; accuracy: {acc}".format(loss=loss, acc=acc))
-
-        plot_helper.plot_traininghistory(hist, loss_type="")
-
-    elif action=="predict":
-        x = [["divorce", "relation", "claim"]]
-        y = ["ground"]
-
-        x, y = transform_data(converter, np.array(x), np.array(y))
-        gc.collect()
-        # x = x.reshape(x.shape[1], x.shape[2])
-        print(x.shape)
-        y_pred = predict_result(x)
-        gc.collect()
-
-        y_pred = reverse_data(converter, y_pred)
-        y_words = converter.decode(y_pred)
-        print(y_words)
+    #
+    # converter = fit_converter()
+    # print(converter.encode(["it"]))
+    # print(converter.decode([3413]))
+    # gc.collect()
+    #
+    # if action=="transform":
+    #     X, Y = load_articles("judgments_trigrams")
+    #     log_helper.print_message('Loaded articles : X:{0} Y:{1}'.format(str(X.shape), str(Y.shape)))
+    #
+    #     X, Y = transform_data(converter, X, Y)
+    #
+    #     log_helper.print_message('Transformed X:{0} and Y:{1}'.format(str(X.shape), str(Y.shape)))
+    #     dataset_helper.save_arrays(np.array(X), np.array(Y), 'data_set')
+    #
+    # elif action=="train":
+    #     X, Y = load_articles("data_set", loading_size=args['size'])
+    #
+    #     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
+    #
+    #     loss, acc, hist = train_model(X_train, y_train, X_test, y_test, batch_size=16, epochs=20)
+    #     log_helper.print_message("Models loss : {loss}; accuracy: {acc}".format(loss=loss, acc=acc))
+    #
+    #     plot_helper.plot_traininghistory(hist, loss_type="")
+    #
+    # elif action=="predict":
+    #     x = [["divorce", "relation", "claim"]]
+    #     y = ["ground"]
+    #
+    #     x, y = transform_data(converter, np.array(x), np.array(y))
+    #     gc.collect()
+    #     # x = x.reshape(x.shape[1], x.shape[2])
+    #     print(x.shape)
+    #     y_pred = predict_result(x)
+    #     gc.collect()
+    #
+    #     y_pred = reverse_data(converter, y_pred)
+    #     y_words = converter.decode(y_pred)
+    #     print(y_words)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--action", type=str)
-    parser.add_argument("--size", type=float, required=False)
+    parser.add_argument("action", type=str, help="Action (train/predict)")
+    parser.add_argument("category", type=float, nargs='?', help="Category")
     args = parser.parse_args()
     args = vars(args)
 
