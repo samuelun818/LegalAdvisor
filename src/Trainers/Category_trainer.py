@@ -71,9 +71,9 @@ class category_trainer:
         print("Input features: {input}; Output classes: {output}".format(input=n_features, output=n_class))
         # input layer and first hidden layer, n_features = input_nodes, hidden layer with 10 nodes
         self.model.add(Input(shape=(n_features,)))
-        self.model.add(Dense(16384, activation="tanh", kernel_initializer='he_normal'))
-        self.model.add(Dropout(0.3))
-        self.model.add(Dense(16384, activation="tanh", kernel_initializer='he_normal'))
+        # self.model.add(Dense(16384, activation="tanh", kernel_initializer='he_normal'))
+        # self.model.add(Dropout(0.3))
+        # self.model.add(Dense(16384, activation="tanh", kernel_initializer='he_normal'))
 
         self.model.add(Dense(4096, activation="tanh", kernel_initializer='he_normal'))
         self.model.add(Dropout(0.3))

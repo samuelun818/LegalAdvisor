@@ -182,35 +182,22 @@ def predict_result(x):
 def transform_judgements(trainer):
     X, Y = [], []
 
-    categoised_set = dataset_helper.load_dataset("categorised_jnum.npy")
-    print(categoised_set.shape)
+    categorised_set = dataset_helper.load_dataset("categorised_jnum.npy")
+    judgement = HKJudgement.HKJudgement()
 
+    for category in categorised_set.item():
+        nums = categorised_set.item()[category]
+        print(len(nums))
+        for num in nums:
+            text = judgement.readJudgement(num)
+            x, y = trainer.encode_articles(text.lower())
 
-    path = f"../datafiles/categories/"
-    files = os.listdir(path)
-    files.sort()
+            if x is not None:
+                print(nums, np.array(x).shape, np.array(y).shape)
+                X.extend(x)
+                Y.extend(y)
 
-    counter = 1
-    for filename in files:
-        ds = dataset_helper.load_dataset("categories/{}".format(filename))
-
-        for article in ds:
-            article = article.lower()
-            cleaned_text = " ".join(article.splitlines())
-            cleaned_text = re.sub(r'[^\x00-\x7F]+', '', cleaned_text)
-
-            if counter == 1:
-                print(cleaned_text)
-                counter = counter + 1
-            else:
-                return None, None
-
-            #     words = text.split()
-            # x, y = trainer.encode_articles(article)
-            #
-            # if x != None:
-            #     X.append(x)
-            #     Y.append(y)
+        return np.array(X), np.array(Y)
 
     return np.array(X), np.array(Y)
 
@@ -220,6 +207,9 @@ def main(args):
     trainer = summary_trainer()
     if action == "train":
         X, Y = transform_judgements(trainer)
+        print(X.shape)
+        print(Y.shape)
+        trainer.train_model(X, Y)
 
 
     #

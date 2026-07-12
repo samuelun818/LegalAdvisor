@@ -40,7 +40,7 @@ def transform_judgements(trainer):
             if category not in categorised_dict:
                 categorised_dict.setdefault(category, [])
 
-            categorised_dict[category].extend(jnum)
+            categorised_dict[category].append(jnum)
 
     dataset_helper.save_dataset(np.array(categorised_dict), "categorised_jnum")
 
