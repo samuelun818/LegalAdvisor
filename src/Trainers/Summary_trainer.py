@@ -22,7 +22,7 @@ class summary_trainer:
 
         return
 
-    def encode_articles(self, text):
+    def encode_articles(self, text, no_of_words=10):
         x, y = None, None
         if text is None or text.strip() == "":
             return x, y
@@ -35,18 +35,18 @@ class summary_trainer:
             self.bag = bag_of_words(1)
             self.bag.load_wordbag()
 
-        if len(words) <= 10:
+        if len(words) <= no_of_words * 2:
             return x, y
 
         x, y = [], []
-        word_x = np.zeros((5, len(self.bag.words)), dtype="bool")
+        word_x = np.zeros((no_of_words, len(self.bag.words)), dtype="bool")
         word_y = np.zeros((len(self.bag.words)), dtype="bool")
         for i in range(len(words)):
 
             counter = 0
             next = 0
-            while counter < 5:
-                if i + counter + next > len(words) - 7:
+            while counter < no_of_words:
+                if i + counter + next > len(words) - (no_of_words * 2):
                     break
 
                 word = (words[i + counter + next])
@@ -59,7 +59,7 @@ class summary_trainer:
                     next = next + 1
                     continue
 
-                if counter == 4:
+                if counter == (no_of_words - 1):
                     out_word = (words[i + counter + next + 1])
                     indices = np.where(self.bag.words == out_word)
 
@@ -67,7 +67,7 @@ class summary_trainer:
 
                 counter = counter + 1
 
-            if len(word_x) == 5:
+            if len(word_x) == no_of_words:
                 x.append(word_x)
                 y.append(word_y)
 
@@ -90,11 +90,11 @@ class summary_trainer:
             [
                 Input(shape=(n_features, n_class)),
                 # Bidirectional(LSTM(n_nodes, return_sequences=True)),
-                # LSTM(n_nodes, recurrent_dropout=0.2, return_sequences=True),
+                LSTM(2048, recurrent_dropout=0.3, return_sequences=True),
                 # Dropout(0.2),
                 # LSTM(n_nodes, recurrent_dropout=0.2, return_sequences=True),
                 # Dropout(0.2),
-                LSTM(n_nodes, recurrent_dropout=0.2),
+                LSTM(2048, recurrent_dropout=0.3),
                 Dense(n_class, activation="softmax"),
             ]
         )
@@ -136,3 +136,21 @@ class summary_trainer:
 
     def predict_model(self):
         return
+
+    def plot_history(self):
+        if self.history is None:
+            return
+
+        filename = "{0}SummarizationTraining_history.png".format(self.PLOTS_DIRECTORY)
+        # plot loss during training
+        pyplot.subplot(211)
+        pyplot.title('Loss / Categorical Cross Entropy ({})'.format("LSTM(2048)"))
+        pyplot.plot(self.history.history['loss'], label='train')
+        pyplot.plot(self.history.history['val_loss'], label='test')
+        # plot accuracy during training
+        pyplot.subplot(212)
+        pyplot.title('Accuracy')
+        pyplot.plot(self.history.history['accuracy'], label='train')
+        pyplot.plot(self.history.history['val_accuracy'], label='test')
+        pyplot.legend()
+        pyplot.savefig(filename)
