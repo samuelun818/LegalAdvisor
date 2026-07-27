@@ -33,7 +33,7 @@ class summary_trainer:
 
         if self.bag == None:
             self.bag = bag_of_words(1)
-            self.bag.load_wordbag()
+            self.bag.load_wordbag_withstopwords()
 
         if len(words) <= no_of_words * 2:
             return x, y
@@ -90,16 +90,16 @@ class summary_trainer:
             [
                 Input(shape=(n_features, n_class)),
                 # Bidirectional(LSTM(n_nodes, return_sequences=True)),
-                LSTM(2048, recurrent_dropout=0.3, return_sequences=True),
+                LSTM(1024, recurrent_dropout=0.2, return_sequences=True),
                 # Dropout(0.2),
-                # LSTM(n_nodes, recurrent_dropout=0.2, return_sequences=True),
+                LSTM(1024, recurrent_dropout=0.2, return_sequences=True),
                 # Dropout(0.2),
-                LSTM(2048, recurrent_dropout=0.3),
+                LSTM(1024, recurrent_dropout=0.2),
                 Dense(n_class, activation="softmax"),
             ]
         )
 
-        optimizer = keras.optimizers.RMSprop(learning_rate=0.01)
+        optimizer = keras.optimizers.RMSprop(learning_rate=0.05)
         print("Set model")
 
         plot_model(self.model, to_file='{0}lstm_neural_network.png'.format(self.PLOTS_DIRECTORY),

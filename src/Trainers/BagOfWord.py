@@ -121,6 +121,12 @@ class bag_of_words:
         filename = "bagof{}.npy".format(self.bagtype)
         self.words = dataset_helper.load_dataset( filename)
 
+    def load_wordbag_withstopwords(self):
+        filename = "bagof{}.npy".format(self.bagtype)
+        self.words = dataset_helper.load_dataset(filename)
+
+        self.words = dataset_helper.merge_dataset(self.words, np.array(self.stop_words))
+
     def merge_wordbag(self):
         filename = "bagof{}".format(self.bagtype)
 
